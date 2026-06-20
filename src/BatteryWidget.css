@@ -1,31 +1,30 @@
 /*
- * Charging battery widget — Figma node 252:22.
- * Visual tokens (colors, radii, sizes) live as custom properties on .bw-card.
- * Figma values: card #1A1A1A, muted #767676, rest #3C3C3C, page #F2F2F2.
+ * Charging battery widget — Figma node 252:22 (native scale).
+ * Card 720x720. Slider track (Base) 595x208 r40 #3C3C3C; marker (Marcador)
+ * #F1F1F1 r40 with a soft shadow. Scale numerals: Oxygen Mono 40px #767676.
  */
 .bw-card {
-  /* --- design tokens --- */
+  /* --- design tokens (Figma px) --- */
   --bw-bg: #1a1a1a;
-  --bw-radius: 56px;
-  --bw-white: #ffffff;
+  --bw-radius: 110px;
+  --bw-white: #f1f1f1;
   --bw-muted: #767676;
   --bw-rest: #3c3c3c;
 
-  --bw-track-h: 64px;
-  --bw-track-pad: 5px;
-  --bw-seg-gap: 5px;
-  --bw-seg-radius: 22px;
+  --bw-track-h: 208px;
+  --bw-track-radius: 40px;
+  --bw-scale-gap: 16px;
 
   position: relative;
   isolation: isolate;
   box-sizing: border-box;
-  width: 360px;
-  height: 360px;
+  width: 720px;
+  height: 720px;
   max-width: 100%;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  padding: 34px 34px 40px;
+  padding: 60px 62px 97px;
   border-radius: var(--bw-radius);
   background: var(--bw-bg);
   overflow: hidden;
@@ -39,9 +38,9 @@
 .bw-glow {
   position: absolute;
   left: 50%;
-  top: 80%;
-  width: 155%;
-  height: 70%;
+  top: 73%;
+  width: 150%;
+  height: 72%;
   transform: translate(-50%, -50%);
   background: radial-gradient(
     50% 50% at 50% 50%,
@@ -50,7 +49,7 @@
     rgba(255, 255, 255, 0) 70%
   );
   opacity: var(--bw-glow-opacity, 0.5);
-  filter: blur(10px);
+  filter: blur(18px);
   transition: opacity 320ms ease;
   pointer-events: none;
   z-index: 0;
@@ -65,9 +64,9 @@
 .bw-status {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 18px;
   color: var(--bw-muted);
-  font-size: 27px;
+  font-size: 52px;
   font-weight: 600;
   letter-spacing: -0.01em;
 }
@@ -78,59 +77,48 @@
 }
 
 .bw-readout {
-  margin-top: 6px;
-  font-size: 30px;
+  margin-top: 10px;
+  font-size: 60px;
   font-weight: 600;
   letter-spacing: -0.02em;
-  color: var(--bw-white);
+  color: #ffffff;
   white-space: nowrap;
 }
 
-/* 0 / 50 / 100 scale, sitting just above the slider, with slashed zeros. */
+/* 0 / 50 / 100 scale — Oxygen Mono, 16px above the slider. */
 .bw-scale {
   display: flex;
   justify-content: space-between;
-  margin-bottom: 12px;
-  padding: 0 6px;
+  margin-bottom: var(--bw-scale-gap);
   color: var(--bw-muted);
-  font-size: 20px;
-  font-weight: 500;
-  font-variant-numeric: slashed-zero;
+  font-family: 'Oxygen Mono', ui-monospace, 'SF Mono', Menlo, Consolas, monospace;
+  font-size: 40px;
+  font-weight: 400;
+  font-feature-settings: 'dlig' on;
+  line-height: normal;
 }
 
-/* Slider: a flex row of two rounded segments (white fill + gray remainder). */
+/* Slider: full-width gray base (Base) with the white marker (Marcador) on top. */
 .bw-track {
-  display: flex;
-  align-items: stretch;
-  gap: var(--bw-seg-gap);
+  position: relative;
   height: var(--bw-track-h);
-  padding: var(--bw-track-pad);
-  border-radius: 999px;
+  border-radius: var(--bw-track-radius);
+  background: var(--bw-rest);
   cursor: pointer;
   touch-action: none; /* let Pointer Events own the gesture */
 }
 
 .bw-track:focus-visible {
   outline: none;
-}
-
-.bw-fill,
-.bw-rest {
-  border-radius: var(--bw-seg-radius);
-  min-width: 0;
-  flex-basis: 0;
+  box-shadow: 0 0 0 4px rgba(255, 255, 255, 0.55);
 }
 
 .bw-fill {
+  position: absolute;
+  left: 0;
+  top: 0;
+  height: 100%;
+  border-radius: var(--bw-track-radius);
   background: var(--bw-white);
-  box-shadow: 0 0 18px rgba(255, 255, 255, 0.35);
-}
-
-.bw-rest {
-  background: var(--bw-rest);
-}
-
-/* Keyboard focus ring around the slider. */
-.bw-track:focus-visible {
-  box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.55);
+  box-shadow: 0 0 20.4px 0 rgba(0, 0, 0, 0.25);
 }

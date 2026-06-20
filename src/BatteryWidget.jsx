@@ -28,17 +28,13 @@ export default function BatteryWidget({ defaultValue = 75, value, onChange }) {
     [isControlled, onChange]
   )
 
-  // The white "fill" segment runs edge-to-edge, so the value maps linearly to the
-  // pointer's x position across the track's inner width — 1:1 with the cursor.
+  // The white marker fills from the left edge, so the value maps linearly to the
+  // pointer's x position across the full track width — 1:1 with the cursor.
   const percentFromClientX = useCallback((clientX) => {
     const track = trackRef.current
     if (!track) return 0
-    const cs = getComputedStyle(track)
-    const padL = parseFloat(cs.paddingLeft)
-    const padR = parseFloat(cs.paddingRight)
     const rect = track.getBoundingClientRect()
-    const inner = Math.max(1, rect.width - padL - padR)
-    return clamp(((clientX - rect.left - padL) / inner) * 100)
+    return clamp(((clientX - rect.left) / Math.max(1, rect.width)) * 100)
   }, [])
 
   const handlePointerDown = useCallback(
@@ -139,9 +135,8 @@ export default function BatteryWidget({ defaultValue = 75, value, onChange }) {
           onPointerCancel={handlePointerUp}
           onKeyDown={handleKeyDown}
         >
-          {/* Filled (white) segment grows with the charge; remaining (gray) fills the rest. */}
-          <div className="bw-fill" style={{ flexGrow: percent }} />
-          <div className="bw-rest" style={{ flexGrow: 100 - percent }} />
+          {/* White marker overlays the gray base; its width tracks the charge. */}
+          <div className="bw-fill" style={{ width: `${percent}%` }} />
         </div>
       </div>
     </div>
