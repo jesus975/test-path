@@ -1,0 +1,141 @@
+/*
+ * Charging battery widget styles.
+ * All visual tokens live in :root-level custom properties on .bw-card so the
+ * design (radii, colors, glow range, fonts) can be tuned to match Figma exactly.
+ */
+.bw-card {
+  /* --- design tokens (tune to Figma) --- */
+  --bw-bg: #0e0e10;
+  --bw-radius: 32px;
+  --bw-text: #f5f5f7;
+  --bw-muted: #8a8a8f;
+  --bw-track: rgba(255, 255, 255, 0.08);
+  --bw-thumb: #ffffff;
+  --bw-pad: 26px;
+  --bw-track-h: 44px;
+  --bw-thumb-w: 56px;
+  --bw-thumb-inset: 4px;
+
+  position: relative;
+  isolation: isolate;
+  width: 320px;
+  max-width: 100%;
+  box-sizing: border-box;
+  padding: var(--bw-pad);
+  border-radius: var(--bw-radius);
+  background: var(--bw-bg);
+  overflow: hidden;
+  color: var(--bw-text);
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+/* Soft white glow emanating from the bottom; opacity is driven by --bw-glow-opacity. */
+.bw-glow {
+  position: absolute;
+  left: 50%;
+  bottom: -55%;
+  width: 150%;
+  height: 110%;
+  transform: translateX(-50%);
+  background: radial-gradient(
+    50% 50% at 50% 50%,
+    rgba(255, 255, 255, 0.95) 0%,
+    rgba(255, 255, 255, 0.45) 35%,
+    rgba(255, 255, 255, 0) 70%
+  );
+  opacity: var(--bw-glow-opacity, 0.5);
+  filter: blur(8px);
+  transition: opacity 320ms ease, filter 320ms ease;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.bw-content {
+  position: relative;
+  z-index: 1;
+}
+
+.bw-status {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  color: var(--bw-muted);
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.bw-bolt {
+  color: var(--bw-muted);
+  flex: none;
+}
+
+.bw-readout {
+  margin-top: 6px;
+  font-size: 22px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  color: var(--bw-text);
+}
+
+.bw-sep,
+.bw-time {
+  font-weight: 500;
+}
+
+.bw-slider {
+  margin-top: 22px;
+}
+
+/* Pill-shaped track. */
+.bw-track {
+  position: relative;
+  height: var(--bw-track-h);
+  border-radius: 999px;
+  background: var(--bw-track);
+  cursor: pointer;
+  touch-action: none; /* let Pointer Events own the gesture */
+}
+
+.bw-track:focus-visible {
+  outline: none;
+}
+
+/* Wide white rounded-rectangle thumb, vertically centered, inset from track edges. */
+.bw-thumb {
+  position: absolute;
+  top: var(--bw-thumb-inset);
+  bottom: var(--bw-thumb-inset);
+  width: var(--bw-thumb-w);
+  border-radius: 999px;
+  background: var(--bw-thumb);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.35);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  will-change: left;
+}
+
+/* Subtle grip line on the thumb. */
+.bw-thumb-grip {
+  width: 16px;
+  height: 4px;
+  border-radius: 999px;
+  background: rgba(0, 0, 0, 0.18);
+}
+
+/* Visible focus ring on the thumb when the track has keyboard focus. */
+.bw-track:focus-visible .bw-thumb {
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.35), 0 0 0 3px rgba(255, 255, 255, 0.55);
+}
+
+.bw-scale {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 10px;
+  padding: 0 2px;
+  color: var(--bw-muted);
+  font-size: 12px;
+  font-weight: 500;
+}
