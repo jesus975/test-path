@@ -40,16 +40,18 @@ function Example() {
 - **Keyboard** (thumb focused): ←/↓ −1, →/↑ +1, Shift+Arrow / PageUp / PageDown ±10, Home → 0, End → 100.
 - **A11y**: `role="slider"` with `aria-valuemin/max/now/text` and `aria-label="Battery charge"`; visible focus ring.
 
-## Matching the Figma values
+## Figma values (node 252:22)
 
-The Figma MCP was **not reachable in this environment** (no `get_design_context` /
-`get_variable_defs` / `get_screenshot` tool, no logged-in browser, and the design URL is
-private), so the exact tokens couldn't be pulled. The visual values were built from the
-written spec and are all exposed as CSS custom properties at the top of
-[`src/BatteryWidget.css`](src/BatteryWidget.css) — `--bw-bg`, `--bw-radius`, `--bw-text`,
-`--bw-muted`, `--bw-track`, `--bw-thumb`, `--bw-thumb-w`, `--bw-track-h`, etc. Drop in the
-real Figma hex/radius/font values there and the component matches without touching the JS.
-```
+The exact tokens were taken from the Figma Inspect panel and applied directly:
+
+- Card background `#1A1A1A`, page background `#F2F2F2`
+- Muted text (bolt, "Charging…", scale) `#767676`, readout `#FFFFFF`
+- Slider: white fill `#FFFFFF`, remaining segment `#3C3C3C`
+- Card 360×360, radius 56px; scale uses slashed-zero numerals; readout uses a hyphen ("75% - 22 min left")
+
+All of these live as CSS custom properties at the top of
+[`src/BatteryWidget.css`](src/BatteryWidget.css) (`--bw-bg`, `--bw-radius`, `--bw-muted`,
+`--bw-rest`, `--bw-track-h`, etc.), so any further tweak is a one-line change.
 
 ## Files
 

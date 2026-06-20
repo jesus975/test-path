@@ -1,8 +1,8 @@
-import { useCallback, useEffect, useRef, useState } from 'react'
+import { useCallback, useRef, useState } from 'react'
 import './BatteryWidget.css'
 
 /**
- * Charging battery widget.
+ * Charging battery widget (Figma node 252:22).
  *
  * Controlled-or-uncontrolled: pass `value` + `onChange` to control it, or just
  * `defaultValue` to let it manage its own state.
@@ -18,7 +18,6 @@ export default function BatteryWidget({ defaultValue = 75, value, onChange }) {
   const percent = clamp(isControlled ? value : internal)
 
   const trackRef = useRef(null)
-  const thumbRef = useRef(null)
 
   const commit = useCallback(
     (next) => {
@@ -29,18 +28,17 @@ export default function BatteryWidget({ defaultValue = 75, value, onChange }) {
     [isControlled, onChange]
   )
 
-  // Convert a pointer's clientX into a 0-100 percentage.
-  // The thumb is wide, so its travel is (track width - thumb width); we map the
-  // pointer to the thumb CENTER so the cursor tracks the thumb 1:1.
+  // The white "fill" segment runs edge-to-edge, so the value maps linearly to the
+  // pointer's x position across the track's inner width — 1:1 with the cursor.
   const percentFromClientX = useCallback((clientX) => {
     const track = trackRef.current
-    const thumb = thumbRef.current
     if (!track) return 0
+    const cs = getComputedStyle(track)
+    const padL = parseFloat(cs.paddingLeft)
+    const padR = parseFloat(cs.paddingRight)
     const rect = track.getBoundingClientRect()
-    const thumbW = thumb ? thumb.offsetWidth : 0
-    const usable = Math.max(1, rect.width - thumbW)
-    const x = clientX - rect.left - thumbW / 2
-    return clamp((x / usable) * 100)
+    const inner = Math.max(1, rect.width - padL - padR)
+    return clamp(((clientX - rect.left - padL) / inner) * 100)
   }, [])
 
   const handlePointerDown = useCallback(
@@ -54,8 +52,7 @@ export default function BatteryWidget({ defaultValue = 75, value, onChange }) {
 
   const handlePointerMove = useCallback(
     (e) => {
-      // Only react while a pointer is captured (i.e. mid-drag).
-      if (!e.currentTarget.hasPointerCapture?.(e.pointerId)) return
+      if (!e.currentTarget.hasPointerCapture?.(e.pointerId)) return // only mid-drag
       commit(percentFromClientX(e.clientX))
     },
     [commit, percentFromClientX]
@@ -98,70 +95,53 @@ export default function BatteryWidget({ defaultValue = 75, value, onChange }) {
     [percent, commit]
   )
 
-  // min left = round((100 - percent) * 0.88)  — 75% -> 22 min, 100% -> 0.
+  // min left = round((100 - percent) * 0.88) — 75% -> 22 min, 100% -> 0.
   const minutesLeft = Math.round((100 - percent) * 0.88)
   const isFull = percent === 100
 
   // Glow opacity maps 0->100% to 0.15->0.9.
   const glowOpacity = 0.15 + (percent / 100) * (0.9 - 0.15)
 
-  // Thumb travel in px is handled by the wrapper width; we position via percent
-  // of the usable track using a CSS calc so the thumb edges never overflow.
-  const thumbStyle = { left: `calc(${percent}% )`, transform: `translateX(-${percent}%)` }
-
   return (
     <div className="bw-card" style={{ '--bw-glow-opacity': glowOpacity }}>
       <div className="bw-glow" aria-hidden="true" />
 
-      <div className="bw-content">
+      <div className="bw-top">
         <div className="bw-status">
           <BoltIcon />
-          <span>{isFull ? 'Charged' : 'Charging…'}</span>
+          <span>Charging…</span>
         </div>
-
         <div className="bw-readout">
-          {isFull ? (
-            <>
-              <span className="bw-percent">100%</span>
-              <span className="bw-sep"> · </span>
-              <span className="bw-time">Fully charged</span>
-            </>
-          ) : (
-            <>
-              <span className="bw-percent">{percent}%</span>
-              <span className="bw-sep"> · </span>
-              <span className="bw-time">{minutesLeft} min left</span>
-            </>
-          )}
+          {isFull ? '100% - Fully charged' : `${percent}% - ${minutesLeft} min left`}
+        </div>
+      </div>
+
+      <div className="bw-bottom">
+        <div className="bw-scale" aria-hidden="true">
+          <span>0</span>
+          <span>50</span>
+          <span>100</span>
         </div>
 
-        <div className="bw-slider">
-          <div
-            ref={trackRef}
-            className="bw-track"
-            role="slider"
-            tabIndex={0}
-            aria-label="Battery charge"
-            aria-valuemin={0}
-            aria-valuemax={100}
-            aria-valuenow={percent}
-            aria-valuetext={isFull ? 'Fully charged' : `${percent}%, ${minutesLeft} minutes left`}
-            onPointerDown={handlePointerDown}
-            onPointerMove={handlePointerMove}
-            onPointerUp={handlePointerUp}
-            onPointerCancel={handlePointerUp}
-            onKeyDown={handleKeyDown}
-          >
-            <div ref={thumbRef} className="bw-thumb" style={thumbStyle}>
-              <span className="bw-thumb-grip" />
-            </div>
-          </div>
-
-          <div className="bw-scale" aria-hidden="true">
-            <span>0</span>
-            <span>50</span>
-            <span>100</span>
-          </div>
+        <div
+          ref={trackRef}
+          className="bw-track"
+          role="slider"
+          tabIndex={0}
+          aria-label="Battery charge"
+          aria-valuemin={0}
+          aria-valuemax={100}
+          aria-valuenow={percent}
+          aria-valuetext={isFull ? 'Fully charged' : `${percent}%, ${minutesLeft} minutes left`}
+          onPointerDown={handlePointerDown}
+          onPointerMove={handlePointerMove}
+          onPointerUp={handlePointerUp}
+          onPointerCancel={handlePointerUp}
+          onKeyDown={handleKeyDown}
+        >
+          {/* Filled (white) segment grows with the charge; remaining (gray) fills the rest. */}
+          <div className="bw-fill" style={{ flexGrow: percent }} />
+          <div className="bw-rest" style={{ flexGrow: 100 - percent }} />
         </div>
       </div>
     </div>
@@ -175,8 +155,11 @@ function clamp(n) {
 
 function BoltIcon() {
   return (
-    <svg className="bw-bolt" width="14" height="18" viewBox="0 0 14 18" fill="none" aria-hidden="true">
-      <path d="M8.2 0 0 10.2h4.9L5.4 18 14 7.3H8.7L8.2 0Z" fill="currentColor" />
+    <svg className="bw-bolt" width="22" height="26" viewBox="0 0 22 26" fill="none" aria-hidden="true">
+      <path
+        d="M12.9 1.3 2.2 14.1c-.5.6-.1 1.5.7 1.5h6.2l-1.8 8.6c-.2.9 1 1.4 1.5.7L19.8 12c.5-.6.1-1.5-.7-1.5h-5.9l1.6-8.5c.2-.9-1-1.4-1.5-.7Z"
+        fill="currentColor"
+      />
     </svg>
   )
 }
