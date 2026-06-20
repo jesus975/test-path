@@ -18,6 +18,20 @@ body {
   gap: 16px;
 }
 
+/* Show the 720px widget at half size without distorting its proportions.
+   The 360x360 box collapses the layout space the scaled-down widget leaves. */
+.widget-scale {
+  width: 360px;
+  height: 360px;
+}
+
+.widget-scale > * {
+  transform: scale(0.5);
+  transform-origin: top left;
+  /* keep the widget at its native 720px before scaling (override its max-width) */
+  max-width: none;
+}
+
 .demo-readout {
   margin: 0;
   color: #6b6b70;

@@ -7,7 +7,10 @@ export default function App() {
 
   return (
     <div className="demo">
-      <BatteryWidget value={charge} onChange={setCharge} />
+      {/* Widget is built at native Figma size (720px); display it at 0.5 scale. */}
+      <div className="widget-scale">
+        <BatteryWidget value={charge} onChange={setCharge} />
+      </div>
       <p className="demo-readout">Parent state: {charge}%</p>
     </div>
   )
