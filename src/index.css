@@ -31,9 +31,3 @@ body {
   /* keep the widget at its native 720px before scaling (override its max-width) */
   max-width: none;
 }
-
-.demo-readout {
-  margin: 0;
-  color: #6b6b70;
-  font-size: 13px;
-}

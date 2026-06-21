@@ -11,7 +11,6 @@ export default function App() {
       <div className="widget-scale">
         <BatteryWidget value={charge} onChange={setCharge} />
       </div>
-      <p className="demo-readout">Parent state: {charge}%</p>
     </div>
   )
 }

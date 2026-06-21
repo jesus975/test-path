@@ -150,7 +150,7 @@ function clamp(n) {
 
 function BoltIcon() {
   return (
-    <svg className="bw-bolt" width="22" height="26" viewBox="0 0 22 26" fill="none" aria-hidden="true">
+    <svg className="bw-bolt" width="48" height="59" viewBox="0 0 22 26" fill="none" aria-hidden="true">
       <path
         d="M12.9 1.3 2.2 14.1c-.5.6-.1 1.5.7 1.5h6.2l-1.8 8.6c-.2.9 1 1.4 1.5.7L19.8 12c.5-.6.1-1.5-.7-1.5h-5.9l1.6-8.5c.2-.9-1-1.4-1.5-.7Z"
         fill="currentColor"
