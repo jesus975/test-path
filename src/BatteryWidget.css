@@ -6,7 +6,7 @@
 .bw-card {
   /* --- design tokens (Figma px) --- */
   --bw-bg: #1a1a1a;
-  --bw-radius: 110px;
+  --bw-radius: 135px;
   --bw-white: #f1f1f1;
   --bw-muted: #767676;
   --bw-rest: #3c3c3c;
@@ -26,6 +26,7 @@
   justify-content: space-between;
   padding: 60px 62px 97px;
   border-radius: var(--bw-radius);
+  border: 1.785px solid #d5d5d5;
   background: var(--bw-bg);
   overflow: hidden;
   color: var(--bw-white);
